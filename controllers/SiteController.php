@@ -184,6 +184,7 @@ class SiteController extends Controller
     }
 
     /**
+     * add order item in order form
      * @return array
      * @throws ForbiddenHttpException
      */
