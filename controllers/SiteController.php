@@ -134,6 +134,10 @@ class SiteController extends Controller
     }
 
 
+    /**
+     * order page and form handler
+     * @return string
+     */
     public function actionOrder()
     {
         $product = new Product();
