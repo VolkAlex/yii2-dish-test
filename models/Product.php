@@ -43,7 +43,7 @@ class Product extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => 'Product',
             'title' => 'Title',
             'price' => 'Price',
             'description' => 'Description',

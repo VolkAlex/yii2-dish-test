@@ -2,14 +2,20 @@
 
 namespace app\controllers;
 
+use app\models\Order;
+use app\models\OrderItem;
+use app\models\Product;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\Json;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\Request;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\helpers\Order as OrderHelper;
 
 class SiteController extends Controller
 {
@@ -127,8 +133,75 @@ class SiteController extends Controller
         return $this->render('about');
     }
 
-    public function actionOrder(Request $request)
-    {
 
+    public function actionOrder()
+    {
+        $product = new Product();
+
+        $testCustomerId = 1;
+        $testOrderState = 1;
+
+        $request = Yii::$app->request->post();
+
+        if ($request) {
+            try {
+                $orderItems = OrderHelper::parseFormRequest($request);
+
+                $order = new Order();
+                $order->setAttribute('customer_id', $testCustomerId);
+                $order->setAttribute('state_id', $testOrderState);
+                $order->save();
+
+                foreach ($orderItems as $item) {
+                    $orderItem = new OrderItem();
+                    $orderItem->setAttributes($item);
+                    $orderItem->setAttribute('order_id', $order->getAttribute('id'));
+                    if ($orderItem->validate()) {
+                        $orderItem->save();
+                    }
+                }
+
+                $itemsWithPrice = OrderHelper::addProductAttributesToOrderItem($orderItems);
+
+                return $this->render('orderPlaced', [
+                    'orderItems' => $itemsWithPrice,
+                    'totalPrice' => OrderHelper::getTotalPrice($itemsWithPrice)
+                ]);
+
+            } catch (\Exception $exception) {
+
+            }
+        }
+
+        return $this->render('order', [
+            'orderItem' => new OrderItem(),
+            'products' => $product::find()->all()
+        ]);
+    }
+
+    /**
+     * @return array
+     * @throws ForbiddenHttpException
+     */
+    public function actionAddOrderItem()
+    {
+        if (Yii::$app->request->isAjax) {
+            $product = new Product();
+            $orderItem = new OrderItem();
+
+            $content = $this->renderPartial('/templates/orderItem',[
+                'orderItem' => $orderItem,
+                'products' => $product::find()->all(),
+            ]);
+
+            Yii::$app->response->setStatusCode(200);
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return [
+                'response' => Json::encode($content),
+                'format' => Response::FORMAT_JSON,
+            ];
+        }
+
+        throw new ForbiddenHttpException();
     }
 }

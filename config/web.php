@@ -51,7 +51,10 @@ $config = [
 
             'rules' => [
                 '/' => 'site/index',
-                'order' => 'site/order'
+                'order' => 'site/order',
+                'add-order-item' => 'site/add-order-item',
+                'login' => 'site/login',
+                'logout' => 'site/logout',
             ],
         ],
     ],

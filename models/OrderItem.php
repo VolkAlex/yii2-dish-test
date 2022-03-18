@@ -46,7 +46,7 @@ class OrderItem extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'order_id' => 'Order ID',
-            'product_id' => 'Product ID',
+            'product_id' => 'Product',
             'count' => 'Count',
         ];
     }
