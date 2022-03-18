@@ -1,44 +1,34 @@
 <?php
 
-namespace app\commands;
-
 use app\models\Customer;
 use app\models\OrderStatus;
 use app\models\Product;
 use Faker\Factory;
-use yii\console\Controller;
+use yii\db\Migration;
 
-class TestController extends Controller
+/**
+ * Class m220318_174249_addBaseData
+ */
+class m220318_174249_addBaseData extends Migration
 {
     /**
-     * generate product fixtures
-     * @return void
+     * {@inheritdoc}
      */
-    public function actionProduct()
+    public function safeUp()
     {
         $faker = Factory::create();
 
-        for($i = 0; $i < 10; $i++)
-        {
+        //sample products
+        for($i = 0; $i < 10; $i++) {
             $product = new Product();
             $product->title = $faker->text(30);
             $product->description = $faker->text(rand(100, 200));
             $product->price = $faker->randomFloat(1, 1, 100);
             $product->save(false);
         }
-        die('Data generation is complete!');
-    }
 
-    /**
-     * generate customers
-     * @return void
-     */
-    public function actionCustomer()
-    {
-        $faker = Factory::create();
-
-        for($i = 0; $i < 10; $i++)
-        {
+        //sample customers
+        for($i = 0; $i < 10; $i++) {
             $customer = new Customer();
             $customer->firstname = $faker->name();
             $customer->lastname = $faker->lastName();
@@ -46,15 +36,8 @@ class TestController extends Controller
             $customer->telephone = $faker->phoneNumber();
             $customer->save(false);
         }
-        die('Data generation is complete!');
-    }
 
-    /**
-     * generate base order states
-     * @return void
-     */
-    public function actionOrderStatus()
-    {
+        //order status
         $fixtures = [
             [
                 'id' => 1,
@@ -76,4 +59,29 @@ class TestController extends Controller
             $orderStatus->save();
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function safeDown()
+    {
+        echo "m220318_174249_addBaseData cannot be reverted.\n";
+
+        return false;
+    }
+
+    /*
+    // Use up()/down() to run migration code without a transaction.
+    public function up()
+    {
+
+    }
+
+    public function down()
+    {
+        echo "m220318_174249_addBaseData cannot be reverted.\n";
+
+        return false;
+    }
+    */
 }
